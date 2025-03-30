@@ -6,7 +6,7 @@ public:
     int range;
     int damagePoints;
 
-    Soldiers(int ID, int team, int position[2]) : Unit(ID, team, position, 50, 10, 5) {}
+    Soldiers(int ID, int team, int position[2]) : Unit(ID, team, position, 50, 10, 5, 2) {}
 
     int distance(Unit * target) {
         return Unit::distance(target);

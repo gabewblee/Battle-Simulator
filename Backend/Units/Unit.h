@@ -1,31 +1,27 @@
 #ifndef UNIT
 #define UNIT
 
+#include "Entity.h"
 #include <algorithm>
 #include <iostream>
 
-class Unit {
+class Unit : public Entity {
 public:
-    int ID;
-    int team;
-    int position[2];
     int HP;
     int range;
     int damagePoints;
+    int movementCost;
 
-    Unit(int ID, int team, int position[2], int HP, int range, int damagePoints) {
-        this->ID = ID;
-        this->team = team;
-        this->position[0] = position[0];
-        this->position[1] = position[1];
+    Unit(int ID, int team, int x, int y, int HP, int range, int damagePoints, int movementCost) : Entity(ID, team, position) {
         this->HP = HP;
         this->range = range;
         this->damagePoints = damagePoints;
+        this->movementCost = movementCost;
     }
 
     int distance(Unit * target) {
-        int horDiff = std::abs(this->position[0] - target->position[0]);
-        int verDiff = std::abs(this->position[1] - target->position[1]);
+        int horDiff = std::abs(this->x - target->x);
+        int verDiff = std::abs(this->y - target->y);
         return horDiff + verDiff;
     }
 
@@ -42,6 +38,10 @@ public:
             target->HP -= damage;
         }
         return damage;
+    }
+
+    std::string getType() {
+        return "Unit";
     }
 };
 
