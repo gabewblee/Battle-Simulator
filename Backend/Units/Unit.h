@@ -2,7 +2,6 @@
 #define UNIT
 
 #include "Entity.h"
-#include <algorithm>
 #include <iostream>
 
 class Unit : public Entity {

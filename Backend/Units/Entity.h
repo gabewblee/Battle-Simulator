@@ -2,6 +2,7 @@
 #define ENTITY
 
 #include <string>
+#include <algorithm>
 
 class Entity {
 public:
