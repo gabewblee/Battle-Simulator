@@ -12,7 +12,7 @@ public:
     int damagePoints;
     int movementCost;
 
-    Unit(int ID, int team, int x, int y, int HP, int range, int damagePoints, int movementCost) : Entity(ID, team, position) {
+    Unit(int ID, int team, int x, int y, int HP, int range, int damagePoints, int movementCost) : Entity(ID, team, x, y) {
         this->HP = HP;
         this->range = range;
         this->damagePoints = damagePoints;
@@ -40,7 +40,7 @@ public:
         return damage;
     }
 
-    std::string getType() {
+    std::string getType() const override {
         return "Unit";
     }
 };
