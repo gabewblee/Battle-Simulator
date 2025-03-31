@@ -3,35 +3,42 @@
 #include <set>
 #include <map>
 
-struct Node {
-    int x;
-    int y;
-    int gVal;
-    int hVal;
+Field::Field(int fieldNumber) : fieldNumber(fieldNumber) { this->field = this->processField(fieldNumber); }
 
-    Node() : x(-1), y(-1), gVal(0), hVal(0) {}
-    Node(int x, int y, int gVal, int hVal) : x(x), y(y), gVal(gVal), hVal(hVal) {}
-
-    bool operator>(const Node& other) const {
-        return this->gVal + this->hVal > other.gVal + other.hVal;
+std::vector<std::vector<Tile>> Field::processField(int fieldNumber) {
+    std::vector<std::vector<int>> selectField = fields[fieldNumber];
+    std::vector<std::vector<Tile>> processedField;
+    int n = selectField.size();
+    for (int y = 0 ; y < n ; y++) {
+        std::vector<Tile> row;
+        for (int x = 0 ; x < n ; x++) {
+            TYPE tileType = (TYPE) selectField[y][x];
+            row.push_back(Tile(tileType));
+        }
+        processedField.push_back(row);
     }
+    return processedField;
+}
 
-    bool operator<(const Node& other) const {
-        if (x != other.x) return x < other.x;
-        return y < other.y;
-    }
-};
+Tile Field::getTile(int x, int y) {
+    return this->field[y][x];
+}
 
-int manhattanDistance(int fromX, int fromY, int toX, int toY) {
+bool Field::inBounds(int x, int y) {
+    int n = this->field.size();
+    return 0 <= x && x < n && 0 <= y && y < n;
+}
+
+int Field::manhattanDistance(int fromX, int fromY, int toX, int toY) {
     return std::abs(fromX - toX) + std::abs(fromY - toY);
 }
 
-std::vector<std::pair<int, int>> reconstructPath(std::map<Node, Node> ancestors, Node curr) {
+std::vector<std::pair<int, int>> Field::reconstructPath(std::map<Node, Node> ancestors, Node curr) {
     /* In the path reconstruction below, we intentially append the elements to the end of the path array
     in order to reduce the overall time complexity from O(n^2) to O(n).
     */
-    std::vector<std::pair<int, int> > path;
-    while (!(curr.x == -1 && curr.y == -1)) {
+    std::vector<std::pair<int, int>> path;
+    while (!curr.isInvalid()) {
         path.emplace_back(curr.x, curr.y);
         curr = ancestors[curr];
     }
@@ -39,47 +46,48 @@ std::vector<std::pair<int, int>> reconstructPath(std::map<Node, Node> ancestors,
     return path;
 }
 
-bool satisfiesRequirements(Field * field, int x, int y) {
-    // return true;
-    if (field->inBounds(x, y)) {
-        Tile tile = field->getTile(x, y);
-        return tile.terrain != BUILDING && !tile.isOccupied();
+bool Field::satisfiesRequirements(int x, int y) {
+    if (!inBounds(x, y)) {
+        return false;
+    } else {
+        Tile tile = this->getTile(x, y);
+        if (!tile.traversible()) return false;
+        if (tile.isOccupied()) return false;
+        return true;
     }
-    return false;
 }
 
-std::vector<std::pair<int, int>> findShortestPath(Field * field, int fromX, int fromY, int toX, int toY) {
-    // A* algorithm
+std::vector<std::pair<int, int>> Field::findShortestPath(int fromX, int fromY, int toX, int toY) {
     Node start(fromX, fromY, 0, manhattanDistance(fromX, fromY, toX, toY));
-    std::priority_queue<Node, std::vector<Node>, std::greater<Node>> Frontier;
+    std::priority_queue<Node, std::vector<Node>, PriorityComparator> Frontier;
     Frontier.push(start);
 
     std::map<Node, Node> ancestors;
-    ancestors[start] = Node();
+    ancestors[start] = Node::invalidNode();
 
-    std::vector<std::pair<int, int> > validDirections = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
-
+    std::vector<std::pair<int, int>> validDirections = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
     std::set<Node> Closed;
+
     while (!Frontier.empty()) {
         Node curr = Frontier.top();
         Frontier.pop();
 
-        if (!Closed.count(curr)) { // If curr has not been visited
+        if (!Closed.count(curr)) {
             Closed.insert(curr);
-            if (curr.x == toX && curr.y == toY) { // If curr is the goal node
+            if (curr.x == toX && curr.y == toY) {
                 return reconstructPath(ancestors, curr);
             }
 
             for (auto [dx, dy] : validDirections) {
                 int possibleX = curr.x + dx;
                 int possibleY = curr.y + dy;
-                if (satisfiesRequirements(field, possibleX, possibleY)) {
-                    Tile thisTile = field->getTile(possibleX, possibleY);
+                if (satisfiesRequirements(possibleX, possibleY)) {
+                    Tile thisTile = this->getTile(possibleX, possibleY);
                     float movementCost = thisTile.getMovementCost();
-                    int gVal = curr.gVal + 1 + movementCost; // Perhaps un-admissible heuristic function! Must verify
+                    int gVal = curr.gVal + 1 + movementCost;
                     int hVal = manhattanDistance(possibleX, possibleY, toX, toY);
                     Node neighbour(possibleX, possibleY, gVal, hVal);
-                    
+
                     if (!Closed.count(neighbour)) {
                         Frontier.push(neighbour);
                         if (!ancestors.count(neighbour)) {
