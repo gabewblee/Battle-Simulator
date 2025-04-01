@@ -1,4 +1,5 @@
-#include "BattleField.h"
+#include "Battlefield.h"
+#include "Fields.h"
 #include <queue>
 #include <set>
 #include <map>
