@@ -1,11 +1,12 @@
-#ifndef WINDOWMANAGER
-#define WINDOWMANAGER
+#ifndef WINDOW_MANAGER_H
+#define WINDOW_MANAGER_H
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <vector>
-#include "View.h"
-#include "TitleView.h"
-#include "../Constants.h"
+#include "Views/View.h"
+#include "Views/TitleView.h"
+#include "Views/SelectionView.h"
 
 class WindowManager {
 public:
@@ -17,13 +18,14 @@ public:
 private:
     unsigned int width;
     unsigned int height;
-    ViewState currState;
-    sf::RenderWindow window;
-    sf::Font font;
-    std::vector<std::unique_ptr<View>> views;
-    View * currView;
 
-    void switchView(ViewState newState);
+    sf::RenderWindow window;
+
+    sf::Font font;
+    View * currView;
+    std::vector<std::unique_ptr<View>> views;
+
+    void switchView(unsigned int newState);
 };
 
 #endif

@@ -1,34 +1,37 @@
 #include "WindowManager.h"
 
-WindowManager::WindowManager(unsigned int width, unsigned int height) : width(width), height(width), currState(ViewState::TITLE), window(sf::VideoMode({width, height}), "Battle Simulator") {
-    if (!font.openFromFile("Frontend/Fonts/SuperPixel.ttf")) {
-        exit(0);
+WindowManager::WindowManager(unsigned int width, unsigned int height) {
+    this->width = width;
+    this->height = height;
+    this->window.create(sf::VideoMode({width, height}), "My window");
+
+    if (!this->font.openFromFile("Frontend/Fonts/SuperPixel.ttf")) {
+        std::cerr << "Failed to load font" << std::endl;
+        exit(EXIT_FAILURE);
     }
-    views.emplace_back(std::make_unique<TitleView>(font));
-    currView = views[currState].get();
+    this->views.emplace_back(std::make_unique<TitleView>(font, 0, width, height));
+    this->views.emplace_back(std::make_unique<SelectionView>(font, 1, width, height));
+    this->currView = this->views[0].get();
     run();
 }
 
 void WindowManager::run() {
-    while (window.isOpen()) {
-        while (const std::optional<sf::Event> event = window.pollEvent())
+    while (this->window.isOpen()) {
+        while (const std::optional<sf::Event> event = this->window.pollEvent())
             eventHandler(event);
-        window.clear();
-        currView->draw(window);
-        window.display();
+        this->window.clear();
+        this->currView->draw(this->window);
+        this->window.display();
     }
 }
 
 void WindowManager::eventHandler(const std::optional<sf::Event> event) {
-    if (event->is<sf::Event::Closed>()) {
-        window.close();  
-    } else {
-        // ViewState newState = currView->handleEvent(event);
-        // if (newState != currState) switchView(newState);
-    }
+    if (event->is<sf::Event::Closed>()) this->window.close();  
+
+    int newState = currView->handleEvent(event, currView->state);
+    if (newState != currView->state) switchView(newState);
 }
 
-void WindowManager::switchView(ViewState newState) {
-    currState = newState;
-    currView = views[newState].get();
+void WindowManager::switchView(unsigned int newState) {
+    this->currView = this->views[newState].get();
 }
