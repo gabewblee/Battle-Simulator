@@ -1,14 +1,15 @@
+#ifndef SOLDIER_H
+#define SOLDIER_H
+
 #include "Unit.h"
 
-class Tanks: public Unit {
+class Soldier : public Unit {
 public:
-    int HP;
-    int range;
-    int damagePoints;
-
-    Tanks(int ID, int team, int x, int y);
+    Soldier(int team, int x, int y);
 
     int distance(Unit * target);
     bool inRange(Unit * target);
     int attack(Unit * target);
 };
+
+#endif

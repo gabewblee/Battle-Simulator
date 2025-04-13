@@ -46,10 +46,12 @@ public:
     std::vector<std::vector<Tile>> processField(int fieldNumber);
     Tile getTile(int x, int y);
     bool inBounds(int x, int y);
+    std::vector<std::pair<int, int>> findShortestPath(int fromX, int fromY, int toX, int toY);
+
+private:
     int manhattanDistance(int fromX, int fromY, int toX, int toY);
     std::vector<std::pair<int, int>> reconstructPath(std::map<Node, Node> ancestors, Node curr);
     bool satisfiesRequirements(int x, int y);
-    std::vector<std::pair<int, int>> findShortestPath(int fromX, int fromY, int toX, int toY);
 };
 
 #endif
