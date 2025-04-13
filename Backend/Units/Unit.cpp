@@ -1,7 +1,7 @@
 #include "Unit.h"
 #include <iostream>
     
-Unit::Unit(int ID, int team, int x, int y, int HP, int range, int damagePoints, int movementCost) : Entity(ID, team, x, y) {
+Unit::Unit(int team, int x, int y, int HP, int range, int damagePoints, int movementCost) : Entity(team, x, y) {
     this->HP = HP;
     this->range = range;
     this->damagePoints = damagePoints;

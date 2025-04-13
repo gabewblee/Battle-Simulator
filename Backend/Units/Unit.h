@@ -1,5 +1,5 @@
-#ifndef UNIT
-#define UNIT
+#ifndef UNIT_H
+#define UNIT_H
 
 #include "Entity.h"
 
@@ -10,7 +10,7 @@ public:
     int damagePoints;
     int movementCost;
 
-    Unit(int ID, int team, int x, int y, int HP, int range, int damagePoints, int movementCost);
+    Unit(int team, int x, int y, int HP, int range, int damagePoints, int movementCost);
 
     int distance(Unit * target);
     bool inRange(Unit * target);

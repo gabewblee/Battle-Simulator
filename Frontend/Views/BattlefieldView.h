@@ -8,17 +8,6 @@
 #include <string>
 #include <iostream>
 
-struct FieldProperties {
-    tmx::Map battlefield;
-    tmx::Vector2u fieldDimensions;
-    tmx::Vector2u tileDimensions;
-    float fieldWidth;
-    float fieldHeight;
-    unsigned int margin;
-    unsigned int spacing;
-    sf::Texture tileset;
-};
-
 class BattlefieldView : public View {
 public:
     BattlefieldView(sf::Font & font, ViewID state, unsigned int width, unsigned int height);
@@ -32,7 +21,11 @@ private:
     FieldProperties properties;
 
     void loadProperties(std::string mapPath);
-    void placeField(sf::RenderWindow & window);
+    void drawField(sf::RenderWindow & window);
+    void drawUnits(sf::RenderWindow & window);
+    void drawUnitBar(sf::RenderWindow & window);
+    std::pair<float, float> getPixelCoordinates(unsigned int x, unsigned int y);
+    std::pair<int, int> getTileCoordinates(unsigned int x, unsigned int y);
 };
 
 #endif

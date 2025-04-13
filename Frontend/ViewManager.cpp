@@ -1,0 +1,48 @@
+#include "ViewManager.h"
+
+ViewManager::ViewManager(unsigned int width, unsigned int height) {
+    this->window.create(sf::VideoMode({width, height}), "My window");
+    this->width = this->window.getSize().x;
+    this->height = this->window.getSize().y;
+    loadFont("Frontend/Fonts/SuperPixel.ttf");
+    loadViews();
+    run();
+}
+
+void ViewManager::run() {
+    while (this->window.isOpen()) {
+        while (const std::optional<sf::Event> event = this->window.pollEvent())
+            eventHandler(event);
+        this->window.clear();
+        this->currView->drawComponents(this->window);
+        this->window.display();
+    }
+}
+
+void ViewManager::eventHandler(const std::optional<sf::Event> event) {
+    if (event->is<sf::Event::Closed>()) {
+        this->window.close();  
+    } else {
+        ViewID newState = currView->handleEvent(event, currView->state);
+        if (newState != currView->state) switchView(newState);
+    }
+}
+
+void ViewManager::switchView(ViewID newState) { 
+    int newStateIndex = (int) newState;
+    this->currView = this->views[newStateIndex].get(); 
+}
+
+void ViewManager::loadFont(std::string fontPath) {
+    if (!this->font.openFromFile(fontPath)) {
+        std::cerr << "Failed to load font" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+void ViewManager::loadViews() {
+    this->views.emplace_back(std::make_unique<TitleView>(this->font, ViewID::TITLE, this->width, this->height));
+    this->views.emplace_back(std::make_unique<GameModeView>(this->font, ViewID::GAMEMODE, this->width, this->height));
+    this->views.emplace_back(std::make_unique<BattlefieldView>(this->font, ViewID::URBANFIELD, this->width, this->height));
+    this->currView = this->views[0].get();
+}

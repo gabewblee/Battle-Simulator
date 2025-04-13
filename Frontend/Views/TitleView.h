@@ -5,17 +5,15 @@
 
 class TitleView : public View {
 public:
-    TitleView(sf::Font & font, const unsigned int state, unsigned int width, unsigned int height);
+    TitleView(sf::Font & font, ViewID state, unsigned int width, unsigned int height);
     ~TitleView() override = default;
-    unsigned int handleEvent(const std::optional<sf::Event> & event, unsigned int currState) override;
-    void draw(sf::RenderWindow & window) override;
+    ViewID handleEvent(const std::optional<sf::Event> & event, ViewID currState) override;
+    void drawComponents(sf::RenderWindow & window) override;
     
 private:
-    sf::Text titleText;
-    sf::Text simulateText;
-    sf::Text menuText;
-    
-    void loadTexts() override;
+    sf::Text title;
+    sf::Text simulate;
+    sf::Text menu;
 };
 
 #endif

@@ -5,7 +5,7 @@
 
 class Building : public Entity {
 public:
-    Building(int ID, int team, int x, int y);
+    Building(int team, int x, int y);
 
     virtual std::string getType() const override;
 };
