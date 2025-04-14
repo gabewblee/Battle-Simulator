@@ -7,13 +7,11 @@ UnitManager::UnitManager(const FieldProperties & fieldProperties)
     initializeUnitBar();
 }
 
-bool UnitManager::addUnit(UnitType unitType, unsigned int team, unsigned int x, unsigned int y) {
-    if (!requirementsSatisfied(unitType, x, y)) {
-        return false;
-    }
+bool UnitManager::addUnit(UnitCard * unitCard, unsigned int team, unsigned int x, unsigned int y) {
+    if (!requirementsSatisfied(unitCard, x, y)) return false;
 
     std::unique_ptr<Unit> unit;
-    switch(unitType) {
+    switch(unitCard->type) {
         case UnitType::SOLDIER:
             unit = std::make_unique<Soldier>(team, x, y);
             break;
@@ -29,23 +27,18 @@ bool UnitManager::addUnit(UnitType unitType, unsigned int team, unsigned int x, 
     }
     this->logicalField[y][x].setOccupant(unit.get());
     userUnits.emplace_back(std::move(unit));
-    this->unitBar[unitType]--;
+    this->unitBar[unitCard->type]--;
     return true;
 }
 
-const std::vector<std::unique_ptr<Unit>> & UnitManager::getUserUnits() const {
-    return this->userUnits;
-}
+const std::vector<std::unique_ptr<Unit>> & UnitManager::getUserUnits() const { return this->userUnits; }
 
-const std::map<UnitType, int> & UnitManager::getUnitBar() const {
-    return this->unitBar;
-}
+const std::map<UnitType, int> & UnitManager::getUnitBar() const { return this->unitBar; }
 
-bool UnitManager::requirementsSatisfied(UnitType unitType, unsigned int x, unsigned int y) {
+bool UnitManager::requirementsSatisfied(UnitCard * unitCard, unsigned int x, unsigned int y) {
     if (!withinBounds(x, y)) return false;
-
     Tile & tile = this->logicalField[y][x];
-    return !tile.isOccupied() && tile.placeable() && this->unitBar[unitType] != 0;
+    return !tile.isOccupied() && tile.placeable() && this->unitBar[unitCard->type] != 0;
 }
 
 void UnitManager::initializeLogicalField(const FieldProperties & fieldProperties) {
@@ -61,8 +54,8 @@ void UnitManager::makeLogicalField(const FieldProperties & fieldProperties) {
     for (const auto & layer : layers) {
         std::string layerName = layer->getName();
 
-        auto iter = TerrainLayers.find(layerName);
-        if (iter == TerrainLayers.end()) continue;
+        auto iter = layerToTerrain.find(layerName);
+        if (iter == layerToTerrain.end()) continue;
         Terrain terrain = iter->second;
 
         const auto & tileLayer = layer->getLayerAs<tmx::TileLayer>();
@@ -78,9 +71,7 @@ void UnitManager::makeLogicalField(const FieldProperties & fieldProperties) {
     }
 }
 
-bool UnitManager::withinBounds(unsigned int x, unsigned int y) {
-    return (0 <= x && x < this->width) && (0 <= y && y < this->height);
-}
+bool UnitManager::withinBounds(unsigned int x, unsigned int y) { return (0 <= x && x < this->width) && (0 <= y && y < this->height); }
 
 void UnitManager::initializeUnitBar() {
     this->unitBar[UnitType::SOLDIER] = 10;

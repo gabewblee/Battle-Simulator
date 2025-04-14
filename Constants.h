@@ -2,11 +2,13 @@
 #define CONSTANTS_H
 
 #include <SFML/Graphics.hpp>
+#include <unordered_map>
+#include <vector>
+#include <string>
 #include "tmxlite/Map.hpp"
 #include "tmxlite/TileLayer.hpp"
-#include <unordered_map>
 
-enum ViewID {
+enum class ViewID {
     TITLE = 0,
     GAMEMODE = 1,
     URBANFIELD = 2,
@@ -14,7 +16,7 @@ enum ViewID {
     UNDERGROUNDFIELD = 2
 };
 
-enum Terrain {
+enum class Terrain {
     NONE,
     ROAD,
     SIDEWALK,
@@ -22,7 +24,8 @@ enum Terrain {
     BUILDING
 };
 
-enum UnitType {
+enum class UnitType {
+    NONE,
     SOLDIER,
     DRONE,
     TANK
@@ -41,6 +44,18 @@ struct FieldProperties {
     sf::Texture tileset;
 };
 
-static const std::unordered_map<std::string, Terrain> TerrainLayers = {{"Road", Terrain::ROAD}, {"Side Walk", Terrain::SIDEWALK}, {"Tree", Terrain::TREE}, {"Building", Terrain::BUILDING}};
+struct UnitCard {
+    UnitType type;
+    sf::RectangleShape image;
+    sf::Text label;
+    UnitCard(sf::Font & font) : label(font) {}
+};
+
+static const std::vector<std::string> unitLabels = {"Soldier", "Drone", "Tank"};
+static const std::unordered_map<std::string, UnitType> unitLabelToType= {{"Soldier", UnitType::SOLDIER}, {"Drone", UnitType::DRONE}, {"Tank", UnitType::TANK}};
+static const std::unordered_map<ViewID, std::string> viewPaths = {{ViewID::URBANFIELD, "Frontend/Tilesets/Urban Field/Urban Field.tmx"}};
+static const std::unordered_map<std::string, Terrain> layerToTerrain = {{"Road", Terrain::ROAD}, {"Side Walk", Terrain::SIDEWALK}, {"Tree", Terrain::TREE}, {"Building", Terrain::BUILDING}};
+
+static const std::string fontPath = "Frontend/Fonts/CallOfOpsDuty.otf";
 
 #endif

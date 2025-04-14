@@ -1,10 +1,10 @@
 #include "ViewManager.h"
 
 ViewManager::ViewManager(unsigned int width, unsigned int height) {
-    this->window.create(sf::VideoMode({width, height}), "My window");
+    this->window.create(sf::VideoMode({width, height}), "Battle Simulator");
     this->width = this->window.getSize().x;
     this->height = this->window.getSize().y;
-    loadFont("Frontend/Fonts/SuperPixel.ttf");
+    loadFont(fontPath);
     loadViews();
     run();
 }
@@ -20,18 +20,12 @@ void ViewManager::run() {
 }
 
 void ViewManager::eventHandler(const std::optional<sf::Event> event) {
-    if (event->is<sf::Event::Closed>()) {
-        this->window.close();  
-    } else {
-        ViewID newState = currView->handleEvent(event, currView->state);
-        if (newState != currView->state) switchView(newState);
-    }
+    if (event->is<sf::Event::Closed>()) this->window.close();  
+    ViewID newState = currView->handleEvent(event, currView->state);
+    if (newState != currView->state) switchView(newState);
 }
 
-void ViewManager::switchView(ViewID newState) { 
-    int newStateIndex = (int) newState;
-    this->currView = this->views[newStateIndex].get(); 
-}
+void ViewManager::switchView(ViewID newState) { this->currView = this->views[(int) newState].get(); }
 
 void ViewManager::loadFont(std::string fontPath) {
     if (!this->font.openFromFile(fontPath)) {

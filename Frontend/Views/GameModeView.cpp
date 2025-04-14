@@ -46,7 +46,7 @@ void GameModeView::drawComponents(sf::RenderWindow & window) {
     this->ruralFieldText.setString("Rural Field");
     this->ruralFieldText.setCharacterSize(24);
     this->ruralFieldText.setFillColor(sf::Color::White);
-    sf::FloatRect ruralFieldBounds = this->ruralFieldText.getLocalBounds();
+    sf::FloatRect ruralFieldBounds = ruralFieldText.getLocalBounds();
     this->ruralFieldText.setOrigin({ruralFieldBounds.size.x / 2.0f, ruralFieldBounds.size.y / 2.0f});
     this->ruralFieldText.setPosition({this->width * 2.5f / 5.0f, this->height * 2.0f / 3.0f});
     window.draw(this->ruralFieldText);

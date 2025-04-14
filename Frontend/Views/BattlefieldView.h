@@ -17,13 +17,18 @@ public:
     void drawComponents(sf::RenderWindow & window) override;
 
 private:
-    UnitManager unitManager;
     FieldProperties properties;
+    std::vector<UnitCard> unitCards;
+    UnitCard * selectedCard;
+    UnitManager unitManager;
 
-    void loadProperties(std::string mapPath);
+    void loadFieldProperties(std::string mapPath);
+    void loadUnitCards();
     void drawField(sf::RenderWindow & window);
     void drawUnits(sf::RenderWindow & window);
-    void drawUnitBar(sf::RenderWindow & window);
+    void drawUnitCards(sf::RenderWindow & window);
+    void handleUnitCardClicked(unsigned int x, unsigned int y);
+    void handleAddUnit(unsigned int x, unsigned int y);
     std::pair<float, float> getPixelCoordinates(unsigned int x, unsigned int y);
     std::pair<int, int> getTileCoordinates(unsigned int x, unsigned int y);
 };

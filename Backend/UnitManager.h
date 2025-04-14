@@ -18,7 +18,7 @@ public:
     UnitManager() = default;
     UnitManager(const FieldProperties & fieldProperties);
 
-    bool addUnit(UnitType unitType, unsigned int team, unsigned int x, unsigned int y);
+    bool addUnit(UnitCard * unitCard, unsigned int team, unsigned int x, unsigned int y);
     const std::vector<std::unique_ptr<Unit>> & getUserUnits() const;
     const std::map<UnitType, int> & getUnitBar() const;
 
@@ -29,7 +29,7 @@ private:
     std::vector<std::unique_ptr<Unit>> userUnits;
     std::map<UnitType, int> unitBar;
 
-    bool requirementsSatisfied(UnitType unitType, unsigned int x, unsigned int y);
+    bool requirementsSatisfied(UnitCard * unitCard, unsigned int x, unsigned int y);
     void initializeLogicalField(const FieldProperties & fieldProperties);
     void makeLogicalField(const FieldProperties & fieldProperties);
     bool withinBounds(unsigned int x, unsigned int y);
