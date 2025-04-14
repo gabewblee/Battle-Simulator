@@ -53,9 +53,8 @@ struct UnitCard {
 
 static const std::vector<std::string> unitLabels = {"Soldier", "Drone", "Tank"};
 static const std::unordered_map<std::string, UnitType> unitLabelToType= {{"Soldier", UnitType::SOLDIER}, {"Drone", UnitType::DRONE}, {"Tank", UnitType::TANK}};
-static const std::unordered_map<ViewID, std::string> viewPaths = {{ViewID::URBANFIELD, "Frontend/Tilesets/Urban Field/Urban Field.tmx"}};
+static const std::unordered_map<ViewID, std::string> viewIDToFieldPath = {{ViewID::URBANFIELD, "Frontend/Tilesets/Urban Field/Urban Field.tmx"}};
 static const std::unordered_map<std::string, Terrain> layerToTerrain = {{"Road", Terrain::ROAD}, {"Side Walk", Terrain::SIDEWALK}, {"Tree", Terrain::TREE}, {"Building", Terrain::BUILDING}};
-
 static const std::string fontPath = "Frontend/Fonts/CallOfOpsDuty.otf";
 
 #endif

@@ -18,7 +18,7 @@ ViewID GameModeView::handleEvent(const std::optional<sf::Event> & event, ViewID 
 
 void GameModeView::drawComponents(sf::RenderWindow & window) {
     this->titleText.setString("Choose a field");
-    this->titleText.setCharacterSize(48);
+    this->titleText.setCharacterSize(60);
     this->titleText.setFillColor(sf::Color::White);
     sf::FloatRect titleBounds = this->titleText.getLocalBounds();
     this->titleText.setOrigin({titleBounds.size.x / 2.0f, titleBounds.size.y / 2.0f});
@@ -26,7 +26,7 @@ void GameModeView::drawComponents(sf::RenderWindow & window) {
     window.draw(this->titleText);
 
     this->urbanFieldText.setString("Urban Field");
-    this->urbanFieldText.setCharacterSize(24);
+    this->urbanFieldText.setCharacterSize(36);
     this->urbanFieldText.setFillColor(sf::Color::White);
     sf::FloatRect urbanFieldBounds = this->urbanFieldText.getLocalBounds();
     this->urbanFieldText.setOrigin({urbanFieldBounds.size.x / 2.0f, urbanFieldBounds.size.y / 2.0f});
@@ -44,7 +44,7 @@ void GameModeView::drawComponents(sf::RenderWindow & window) {
     window.draw(this->urbanFieldContainer);
 
     this->ruralFieldText.setString("Rural Field");
-    this->ruralFieldText.setCharacterSize(24);
+    this->ruralFieldText.setCharacterSize(36);
     this->ruralFieldText.setFillColor(sf::Color::White);
     sf::FloatRect ruralFieldBounds = ruralFieldText.getLocalBounds();
     this->ruralFieldText.setOrigin({ruralFieldBounds.size.x / 2.0f, ruralFieldBounds.size.y / 2.0f});
@@ -62,7 +62,7 @@ void GameModeView::drawComponents(sf::RenderWindow & window) {
     window.draw(this->ruralFieldContainer);
 
     this->undergroundFieldText.setString("Underground Field");
-    this->undergroundFieldText.setCharacterSize(24);
+    this->undergroundFieldText.setCharacterSize(36);
     this->undergroundFieldText.setFillColor(sf::Color::White);
     sf::FloatRect undergroundFieldBounds = this->undergroundFieldText.getLocalBounds();
     this->undergroundFieldText.setOrigin({undergroundFieldBounds.size.x / 2.0f, undergroundFieldBounds.size.y / 2.0f});

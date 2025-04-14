@@ -2,23 +2,26 @@
 
 BattlefieldView::BattlefieldView(sf::Font & font, ViewID state, unsigned int width, unsigned int height) 
     : View(font, state, width, height) {
-    auto iter = viewPaths.find(state);
-    if (iter == viewPaths.end()) {
-        std::cerr << "Invalid ViewID state for battlefield" << std::endl;
+    auto iter = viewIDToFieldPath.find(state);
+    if (iter == viewIDToFieldPath.end()) {
+        std::cerr << "Failed to find field path\n" << std::endl;
         exit(EXIT_FAILURE);
     }
     loadFieldProperties(iter->second);
     loadUnitCards();
-    this->selectedCard = nullptr;
     this->unitManager = UnitManager(this->properties);
+    this->currCard = nullptr;
 }
 
 ViewID BattlefieldView::handleEvent(const std::optional<sf::Event> & event, ViewID currState) {
     if (const auto * mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
         unsigned int x = mouseButtonPressed->position.x;
         unsigned int y = mouseButtonPressed->position.y;
-        handleUnitCardClicked(x, y);
-        handleAddUnit(x, y);
+        if (fieldClicked(x, y)) {
+            addUnit(x, y);
+        } else {
+            unitCardClicked(x, y);
+        }    
     }
     return currState;
 }
@@ -29,9 +32,9 @@ void BattlefieldView::drawComponents(sf::RenderWindow & window) {
     drawUnitCards(window);
 }
 
-void BattlefieldView::loadFieldProperties(std::string mapPath) {
-    if (!this->properties.battlefield.load(mapPath)) {
-        std::cerr << "Failed to load map at: " << mapPath << std::endl;
+void BattlefieldView::loadFieldProperties(std::string fieldPath) {
+    if (!this->properties.battlefield.load(fieldPath)) {
+        std::cerr << "Failed to load map at: " << fieldPath << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -56,7 +59,7 @@ void BattlefieldView::loadFieldProperties(std::string mapPath) {
 
     this->properties.margin = tileset.getMargin();
     this->properties.spacing = tileset.getSpacing();
-    this->properties.offsetX = 0;
+    this->properties.offsetX = 0.f;
     this->properties.offsetY = (this->height - this->properties.fieldHeight) / 2.0f;
 }
 
@@ -92,6 +95,8 @@ void BattlefieldView::loadUnitCards() {
         cardStart += cardWidth;
     }
 }
+
+bool BattlefieldView::fieldClicked(unsigned int x, unsigned int y) { return (0 <= x && x < this->properties.fieldWidth) && (0 <= y < this->properties.fieldHeight); }
 
 void BattlefieldView::drawField(sf::RenderWindow & window) {
     sf::Sprite sprite(this->properties.tileset);
@@ -146,15 +151,15 @@ void BattlefieldView::drawUnitCards(sf::RenderWindow & window) {
     }
 }
 
-void BattlefieldView::handleUnitCardClicked(unsigned int x, unsigned int y) {
+void BattlefieldView::unitCardClicked(unsigned int x, unsigned int y) {
     for (UnitCard & unitCard : this->unitCards) {
         if (unitCard.image.getGlobalBounds().contains({(float) x, (float) y})) {
-            if (this->selectedCard && this->selectedCard == &unitCard) {
+            if (this->currCard && this->currCard == &unitCard) {
                 unitCard.image.setFillColor(sf::Color::Black);
-                this->selectedCard = nullptr;
+                this->currCard = nullptr;
             } else {
-                if (this->selectedCard) this->selectedCard->image.setFillColor(sf::Color::Black);
-                this->selectedCard = &unitCard;
+                if (this->currCard) this->currCard->image.setFillColor(sf::Color::Black);
+                this->currCard = &unitCard;
                 unitCard.image.setFillColor(sf::Color(105, 105, 105));
             }
             break;
@@ -162,12 +167,14 @@ void BattlefieldView::handleUnitCardClicked(unsigned int x, unsigned int y) {
     }
 }
 
-void BattlefieldView::handleAddUnit(unsigned int x, unsigned int y) {
-    if (this->selectedCard) { 
-        std::pair<int, int> tileCoordinates = getTileCoordinates(x, y);
+void BattlefieldView::addUnit(unsigned int x, unsigned int y) {
+    if (!this->currCard) {
+        std::cerr << "Unit selection required\n" << std::endl;
+    } else {
+        std::pair<unsigned int, unsigned int> tileCoordinates = getTileCoordinates(x, y);
         int tileX = tileCoordinates.first;
         int tileY = tileCoordinates.second;
-        this->unitManager.addUnit(this->selectedCard, 1, tileX, tileY);
+        this->unitManager.addUnit(this->currCard, 1, tileX, tileY);
     }
 }
 
@@ -177,8 +184,8 @@ std::pair<float, float> BattlefieldView::getPixelCoordinates(unsigned int x, uns
     return {pixelX, pixelY};
 }
 
-std::pair<int, int> BattlefieldView::getTileCoordinates(unsigned int x, unsigned int y) {
-    int tileX = (x - this->properties.offsetX) / this->properties.tileDimensions.x;
-    int tileY = (y - this->properties.offsetY) / this->properties.tileDimensions.y;
+std::pair<unsigned int, unsigned int> BattlefieldView::getTileCoordinates(unsigned int x, unsigned int y) {
+    unsigned int tileX = (x - this->properties.offsetX) / this->properties.tileDimensions.x;
+    unsigned int tileY = (y - this->properties.offsetY) / this->properties.tileDimensions.y;
     return {tileX, tileY};
 }

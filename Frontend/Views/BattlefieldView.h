@@ -19,18 +19,19 @@ public:
 private:
     FieldProperties properties;
     std::vector<UnitCard> unitCards;
-    UnitCard * selectedCard;
     UnitManager unitManager;
+    UnitCard * currCard;
 
     void loadFieldProperties(std::string mapPath);
     void loadUnitCards();
+    bool fieldClicked(unsigned int x, unsigned int y);
     void drawField(sf::RenderWindow & window);
     void drawUnits(sf::RenderWindow & window);
     void drawUnitCards(sf::RenderWindow & window);
-    void handleUnitCardClicked(unsigned int x, unsigned int y);
-    void handleAddUnit(unsigned int x, unsigned int y);
+    void unitCardClicked(unsigned int x, unsigned int y);
+    void addUnit(unsigned int x, unsigned int y);
     std::pair<float, float> getPixelCoordinates(unsigned int x, unsigned int y);
-    std::pair<int, int> getTileCoordinates(unsigned int x, unsigned int y);
+    std::pair<unsigned int, unsigned int> getTileCoordinates(unsigned int x, unsigned int y);
 };
 
 #endif
