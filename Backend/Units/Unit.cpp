@@ -1,31 +1,22 @@
-#include "Unit.h"
 #include <iostream>
+#include "Unit.h"
     
-Unit::Unit(int team, int x, int y, int HP, int range, int damagePoints, int movementCost) : Entity(team, x, y) {
-    this->HP = HP;
-    this->range = range;
-    this->damagePoints = damagePoints;
-    this->movementCost = movementCost;
-}
+Unit::Unit(unsigned int team, unsigned int x, unsigned int y, unsigned int HP, unsigned int range, unsigned int damagePoints, unsigned int movementCost) 
+    : HP(HP), range(range), damagePoints(damagePoints), movementCost(movementCost), enemy(nullptr), Entity(team, x, y) {}
 
-int Unit::distance(Unit * target) {
-    int horDiff = std::abs(this->x - target->x);
-    int verDiff = std::abs(this->y - target->y);
-    return horDiff + verDiff;
-}
+void Unit::setEnemy(Unit * enemy) { this->enemy = enemy; }
+
+void Unit::setEnemyPath(std::vector<std::pair<int, int>> & enemyPath) { this->enemyPath = enemyPath; }
+
+void Unit::addAttackingUnit(Unit * unit) { this->attackingUnits.push_back(unit); }
+
+void Unit::removeAttackingUnit(Unit * unit) { this->attackingUnits.erase(std::remove(this->attackingUnits.begin(), this->attackingUnits.end(), unit), this->attackingUnits.end());}
 
 bool Unit::inRange(Unit * target) {
-    return distance(target) <= this->range;
+    unsigned int manhattanDistance = abs((int) this->x - (int) target->x) + abs((int) this->y - (int) target->y);
+    return manhattanDistance <= this->range;
 }
 
-int Unit::attack(Unit * target) {
-    int damage = std::min(this->damagePoints, target->HP);
-    if (inRange(target)) {
-        target->HP -= damage;
-    }
-    return damage;
-}
+void Unit::attack(Unit * target) { target->HP -= this->damagePoints; }
 
-std::string Unit::getType() const {
-    return "Unit";
-}
+bool Unit::isDead() { return this->HP <= 0; }

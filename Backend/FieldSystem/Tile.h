@@ -3,7 +3,6 @@
 
 #include "../Units/Entity.h"
 #include "../../Constants.h"
-#include <limits>
 
 class Tile {
 public:
@@ -14,8 +13,8 @@ public:
     void setOccupant(Entity * occupant);
     Entity * getOccupant();
     bool isOccupied();
-    bool traversible();
-    bool placeable();
+    bool canPass();
+    bool canPlace();
 };
 
 #endif

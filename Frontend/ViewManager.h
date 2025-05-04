@@ -6,8 +6,6 @@
 #include <vector>
 #include <string>
 #include "Views/View.h"
-#include "Views/TitleView.h"
-#include "Views/GameModeView.h"
 #include "Views/BattlefieldView.h"
 
 class ViewManager {
@@ -23,7 +21,7 @@ private:
     View * currView;
 
     void run();
-    void eventHandler(const std::optional<sf::Event> event);
+    void handleEvent(const std::optional<sf::Event> event);
     void switchView(ViewID newState);
     void loadFont(std::string fontPath);
     void loadViews();

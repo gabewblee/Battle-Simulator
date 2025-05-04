@@ -2,38 +2,34 @@
 #define UNIT_MANAGER_H
 
 #include <vector>
-#include <iostream>
-#include <map>
-#include "tmxlite/Map.hpp"
-#include "tmxlite/TileLayer.hpp"
-#include "Field System/Tile.h"
+#include "FieldSystem/Tile.h"
 #include "Units/Unit.h"
-#include "Units/Soldier.h"
-#include "Units/Drone.h"
-#include "Units/Tank.h"
 #include "../Constants.h"
 
 class UnitManager {
 public:
-    UnitManager() = default;
     UnitManager(const FieldProperties & fieldProperties);
+    ~UnitManager() = default;
 
-    bool addUnit(UnitCard * unitCard, unsigned int team, unsigned int x, unsigned int y);
-    const std::vector<std::unique_ptr<Unit>> & getUserUnits() const;
-    const std::map<UnitType, int> & getUnitBar() const;
+    std::vector<std::unique_ptr<Unit>> & getPlayerUnits();
+    std::vector<std::unique_ptr<Unit>> & getEnemyUnits();
+    void addUnit(unsigned int team, unsigned int x, unsigned int y);
+    void removeUnit(Unit * unit);
+    void moveUnit(unsigned int srcX, unsigned int srcY, unsigned int destX, unsigned int destY);
+    void search();
+    void update();
 
 private:
-    unsigned int width;
-    unsigned int height;
+    const FieldProperties & fieldProperties;
     std::vector<std::vector<Tile>> logicalField;
-    std::vector<std::unique_ptr<Unit>> userUnits;
-    std::map<UnitType, int> unitBar;
+    std::vector<std::unique_ptr<Unit>> playerUnits;
+    std::vector<std::unique_ptr<Unit>> enemyUnits;
 
-    bool requirementsSatisfied(UnitCard * unitCard, unsigned int x, unsigned int y);
-    void initializeLogicalField(const FieldProperties & fieldProperties);
-    void makeLogicalField(const FieldProperties & fieldProperties);
-    bool withinBounds(unsigned int x, unsigned int y);
-    void initializeUnitBar();
+    void loadLogicalField(const FieldProperties & fieldProperties);
+    void loadEnemyUnits();
+    std::vector<std::pair<int, int>> reconstructPath(std::map<std::pair<int, int>, std::pair<int, int>> ancestors, std::pair<int, int> curr);
+    bool inBounds(unsigned int x, unsigned int y);
+    void BFS(Unit * playerUnit);
 };
 
 #endif

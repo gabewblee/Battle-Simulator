@@ -4,7 +4,7 @@ ViewManager::ViewManager(unsigned int width, unsigned int height) {
     this->window.create(sf::VideoMode({width, height}), "Battle Simulator");
     this->width = this->window.getSize().x;
     this->height = this->window.getSize().y;
-    loadFont(fontPath);
+    loadFont("Frontend/Fonts/CallOfOpsDuty.otf");
     loadViews();
     run();
 }
@@ -12,14 +12,14 @@ ViewManager::ViewManager(unsigned int width, unsigned int height) {
 void ViewManager::run() {
     while (this->window.isOpen()) {
         while (const std::optional<sf::Event> event = this->window.pollEvent())
-            eventHandler(event);
+            handleEvent(event);
         this->window.clear();
         this->currView->drawComponents(this->window);
         this->window.display();
     }
 }
 
-void ViewManager::eventHandler(const std::optional<sf::Event> event) {
+void ViewManager::handleEvent(const std::optional<sf::Event> event) {
     if (event->is<sf::Event::Closed>()) this->window.close();  
     ViewID newState = currView->handleEvent(event, currView->state);
     if (newState != currView->state) switchView(newState);
@@ -35,8 +35,8 @@ void ViewManager::loadFont(std::string fontPath) {
 }
 
 void ViewManager::loadViews() {
-    this->views.emplace_back(std::make_unique<TitleView>(this->font, ViewID::TITLE, this->width, this->height));
-    this->views.emplace_back(std::make_unique<GameModeView>(this->font, ViewID::GAMEMODE, this->width, this->height));
+    // this->views.emplace_back(std::make_unique<TitleView>(this->font, ViewID::TITLE, this->width, this->height));
+    // this->views.emplace_back(std::make_unique<GameModeView>(this->font, ViewID::GAMEMODE, this->width, this->height));
     this->views.emplace_back(std::make_unique<BattlefieldView>(this->font, ViewID::URBANFIELD, this->width, this->height));
     this->currView = this->views[0].get();
 }
